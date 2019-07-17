@@ -3,14 +3,16 @@ package kafka
 import (
 	"context"
 	"time"
-	"github.com/segmentio/kafka-go"
+
+	kafka "github.com/segmentio/kafka-go"
 )
 
-func Push(parent context.Context, key, value []byte) err error {
+// Push push
+func Push(parent context.Context, key, value []byte) (err error) {
 	message := kafka.Message{
-		Key: key,
+		Key:   key,
 		Value: value,
-		Time: time.Now(),
+		Time:  time.Now(),
 	}
 
 	return writer.WriteMessages(parent, message)
