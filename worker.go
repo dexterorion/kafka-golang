@@ -3,16 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
-	"os/signal"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/namsral/flag"
 	"github.com/rs/zerolog/log"
 	kafka "github.com/segmentio/kafka-go"
-	"github.com/segmentio/kafka-go/snappy"
 )
 
 var (
@@ -29,12 +25,9 @@ func main() {
 	flag.BoolVar(&kafkaVerbose, "kafka-verbose", true, "Kafka verbose logging")
 	flag.StringVar(&kafkaTopic, "kafka-topic", "foo", "Kafka topic. Only one topic per worker.")
 	flag.StringVar(&kafkaConsumerGroup, "kafka-consumer-group", "consumer-group", "Kafka consumer group")
-	flag.StringVar(&kafkaClientId, "kafka-client-id", "my-client-id", "Kafka client id")
+	flag.StringVar(&kafkaClientId, "kafka-client-id", "my-kafka-client", "Kafka client id")
 
 	flag.Parse()
-
-	sigchan := make(chan os.Signal, 1)
-	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
 	brokers := strings.Split(kafkaBrokerUrl, ",")
 
@@ -59,16 +52,13 @@ func main() {
 			continue
 		}
 
-		value := m.Value
-		if m.CompressionCodec == snappy.NewCompressionCodec() {
-			_, err = snappy.NewCompressionCodec().Decode(value, m.Value)
-		}
+		// value, err := snappy.NewCompressionCodec().Decode(m.Value)
 
-		if err != nil {
-			log.Error().Msgf("error while receiving message: %s", err.Error())
-			continue
-		}
+		// if err != nil {
+		// 	log.Error().Msgf("error while receiving message: %s", err.Error())
+		// 	continue
+		// }
 
-		fmt.Printf("message at topic/partition/offset %v/%v/%v: %s\n", m.Topic, m.Partition, m.Offset, string(value))
+		fmt.Printf("message at topic/partition/offset %v/%v/%v: %s\n", m.Topic, m.Partition, m.Offset, string(m.Value))
 	}
 }

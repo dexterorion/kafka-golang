@@ -10,7 +10,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/dexterorion/kafka-golang/kafka"
+	kafka "github.com/dexterorion/kafka-golang/kafka"
 	"github.com/gin-gonic/gin"
 	"github.com/namsral/flag"
 	"github.com/rs/zerolog/log"
